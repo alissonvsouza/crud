@@ -1,64 +1,62 @@
 const findAll = (connection) => {
     return new Promise((resolve, reject) => {
-        connection.query('select * from pessoas', (err, results) => {
-            if (err) {
-                reject(err)
-            } else {
-                resolve(results)
-            }
-        })
+        connection('pessoas')
+            .select('*')
+            .then(resolve)
+            .catch(reject)
     })
 }
 
 const findById = (connection, id) => {
     return new Promise((resolve, reject) => {
-        connection.query('select * from pessoas where id = ' + id, (err, results) => {
-            if (err) {
-                reject(err)
-            } else {
+        connection('pessoas')
+            .where({ id })
+            .select('*')
+            .then(results => {
                 if(results.length > 0) {
                     resolve(results[0])
                 } else {
                     resolve({})
                 }
-            }
-        })
+            })
+            .catch(reject)
     })
 }
 
 const deleteOne = (connection, id) => {
     return new Promise((resolve, reject) => {
-        connection.query('delete from pessoas where id = '+id+' limit 1', (err) => {
-            if (err) {
-                reject(err)
-            } else [
-                resolve()
-            ]
-        })
+        connection('pessoas')
+            .where({ id })
+            .del()
+            .then(resolve)
+            .catch(reject)
     })
 }
 
 const create = (connection, data) => {
     return new Promise((resolve, reject) => {
-        connection.query(`insert into pessoas (nome, nascimento, cargo) values ('${data.nome}', '${data.nascimento}', '${data.cargo}')`, (err) => {
-            if (err) {
-                reject(err)
-            } else {
-                resolve()
-            }
-        })
+        connection('pessoas')
+            .insert({
+                nome: data.nome,
+                nascimento: data.nascimento,
+                cargo: data.cargo
+            })
+            .then(resolve)
+            .catch(reject)
     })
 }
 
 const update = (connection, id, data) => {
     return new Promise((resolve, reject) => {
-        connection.query(`update pessoas set nome='${data.nome}', nascimento='${data.nascimento}', cargo='${data.cargo}' where id = ${id}`, (err) => {
-            if (err) {
-                reject(err)
-            } else {
-                resolve()
-            }
-        })
+        connection('pessoas')
+            .where({ id })
+            .update({
+                nome: data.nome,
+                nascimento: data.nascimento,
+                cargo: data.cargo
+            })
+            .then(resolve)
+            .catch(reject)
     })
 }
 
